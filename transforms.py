@@ -36,11 +36,12 @@ def sharpen(img, kernel=None):
 
 
 if __name__ == "__main__":
-	cap = cv2.VideoCapture(0)
-	_,img = cap.read()
-	cap.release()
+	# cap = cv2.VideoCapture(0)
+	# _,img = cap.read()
+	# cap.release()
+	img = cv2.imread("contact-us-1208462_1280.png")
 	print(img.shape)
-	img = sharpen(img, (5,5))
+	img = resize(img, (128, 39))
 	print(img.shape)
-	cv2.imwrite("dum.jpg",img)
+	cv2.imwrite("one.jpg",img)
 
