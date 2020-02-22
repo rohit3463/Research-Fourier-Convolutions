@@ -34,28 +34,15 @@ class ConvNd(Module):
         self.output_padding = output_padding
         self.groups = groups
         self.padding_mode = padding_mode
-                # self.torch.nn.Parameter(torch.rand(out_channels, sequence_length, 2, kernel_size, kernel_size))
         self.weight = torch.nn.Parameter(torch.rand(out_channels, sequence_length, 2, in_channels, kernel_size[0], kernel_size[1]))
-
-        # if transposed:
-        #     # self.weight = Parameter(torch.Tensor(
-        #     #     in_channels, out_channels // groups, *kernel_size))
-                # else:
-        #     # self.weight = Parameter(torch.Tensor(
-        #     #     out_channels, in_channels // groups, *kernel_size))
         if bias:
             self.bias = Parameter(torch.Tensor(out_channels))
         else:
             self.bias = Parameter(torch.Tensor(out_channels))
-            # self.register_parameter('bias', None)
         self.reset_parameters()
 
     def reset_parameters(self):
         init.kaiming_uniform_(self.weight, a=math.sqrt(5))
-        # if self.bias is not None:
-        #     fan_in, _ = init._calculate_fan_in_and_fan_out(self.weight)
-        #     bound = 1 / math.sqrt(fan_in)
-        #     init.uniform_(self.bias, -bound, bound)
 
     def extra_repr(self):
         s = ('{in_channels}, {out_channels}, kernel_size={kernel_size}'
@@ -81,12 +68,6 @@ class ConvNd(Module):
 
 class ConvFourier(ConvNd):
     def __init__(self, in_channels, out_channels, kernel_size, sequence_length, stride=1, padding=0, padding_mode ="zeros", dilation=1,bias=False,groups=1):
-        # super(Fourier_ConvNet, self).__init__()
-        # if(type(padding)==type(1)):
-        #   self.padding = (padding, padding)
-        # else:
-        #   assert (type(padding) == type(()) or type(padding) == type([]) ) and len(padding)==2
-        #   self.padding  = padding
         self.k_Size = kernel_size
         self.o_channels = out_channels
         self.sequence_length = sequence_length
@@ -170,9 +151,9 @@ class ConvFourier(ConvNd):
 
 
 
+if __name__ == "__main__":
 
+	my_layer = ConvFourier(in_channels = 3,out_channels = 1, kernel_size = 3, sequence_length = 1,padding=[5,3],padding_mode ="zeros", stride = 1)
+	a = torch.tensor(torch.rand( 1, 3, 300, 350))
 
-my_layer = ConvFourier(in_channels = 3,out_channels = 1, kernel_size = 3, sequence_length = 1,padding=[5,3],padding_mode ="zeros", stride = 1)
-a = torch.tensor(torch.rand( 1, 3, 300, 350))
-
-out  = my_layer(a)
+	out  = my_layer(a)
