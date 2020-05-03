@@ -38,7 +38,6 @@ class ConvNd(Module):
         self.weight.requires_grad = True
         if bias:
             self.bias = Parameter(torch.Tensor(out_channels))
-            self.bias.requires_grad = True
         else:
             self.bias = torch.Tensor(torch.zeros(out_channels), dtype= torch.float32)
         self.reset_parameters()
@@ -69,7 +68,7 @@ class ConvNd(Module):
             self.padding_mode = 'zeros'
 
 class ConvFourier(ConvNd):
-    def __init__(self, in_channels, out_channels, kernel_size, sequence_length, stride=1, padding=0, padding_mode ="zeros", dilation=1,bias=False,groups=1):
+    def __init__(self, in_channels, out_channels, kernel_size, sequence_length, stride=1, padding=0, padding_mode ="zeros", dilation=1,bias=True,groups=1):
         self.k_Size = kernel_size
         self.o_channels = out_channels
         self.sequence_length = sequence_length

@@ -3,6 +3,7 @@ import sklearn.datasets
 import numpy as np
 from matplotlib import pyplot
 import matplotlib.pyplot as plt
+import torch
 
 
 
@@ -77,9 +78,9 @@ def get_generator(dataset = "digit_dataset", batch_size = 1, batch_shuffle = Tru
             num_workers : Count of CPU thread working
     '''
     param = {
-    'batch_size': 1,
+    'batch_size': batch_size,
     'shuffle': True,
-    'num_workers': 4
+    'num_workers': num_workers
     }
     loader = DataTupple(dataset)
     return DataLoader(loader, **param)
