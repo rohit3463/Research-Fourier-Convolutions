@@ -35,10 +35,12 @@ class ConvNd(Module):
         self.groups = groups
         self.padding_mode = padding_mode
         self.weight = torch.nn.Parameter(torch.rand(out_channels, sequence_length, 2, in_channels, kernel_size[0], kernel_size[1]))
+        self.weight.requires_grad = True
         if bias:
             self.bias = Parameter(torch.Tensor(out_channels))
+            self.bias.requires_grad = True
         else:
-            self.bias = Parameter(torch.Tensor(out_channels))
+            self.bias = torch.Tensor(torch.zeros(out_channels), dtype= torch.float32)
         self.reset_parameters()
 
     def reset_parameters(self):
