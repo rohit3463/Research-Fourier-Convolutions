@@ -99,7 +99,7 @@ class ConvFourier(ConvNd):
         stride = self.stride[0]
         out_width = ((width - kernel_size[1] + 2*self.padding[1]) // self.stride[1]) + 1
         out_height = ((height - kernel_size[0] + 2*self.padding[0]) // self.stride[0]) + 1
-        out_tensor = torch.tensor(torch.zeros((batch_size,out_channels,out_height, out_width), dtype=torch.float32))
+        out_tensor = torch.zeros((batch_size,out_channels,out_height, out_width), dtype=torch.float32).requires_grad_(True);
         for filter_index in range(0, self.out_channels):
             for i in range(0, out_height, stride):
                 for j in range(0, out_width, stride):
@@ -115,7 +115,7 @@ class ConvFourier(ConvNd):
                     and weight of dimension                            ( filters,sequence_length,2                                        ,channel, height, width)
         '''
         assert sequence_length <= weight.shape[1]
-        out_tensor = torch.tensor(torch.zeros(input.shape), dtype= torch.float32)
+        out_tensor = torch.tensor(torch.zeros(input.shape, dtype=torch.float32), dtype= torch.float32)
         for sl in range(0,sequence_length):
           alpha = weight[filter_index, sl, 0, :, :, :].view(weight.shape[-3:])
           beta  = (input*sl).cos()
