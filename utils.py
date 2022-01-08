@@ -1,8 +1,10 @@
 from torch.utils.data import Dataset, DataLoader
 import sklearn.datasets
 import numpy as np
+import pandas as pd
 from matplotlib import pyplot
 import matplotlib.pyplot as plt
+import torch
 
 
 
@@ -48,12 +50,10 @@ def getImgBlackWhiteCross(img1, img2, img3, img4, square_size = 100):
 
 ## DataLoader class definition of pytorch
 class DataTupple(Dataset):
-  def __init__(self, dataset = "digit_dataset"):
+  def __init__(self, dataset):
     ## ToDo : Loads dataset for data in Filesystem
-    if(dataset == "digit_dataset"):
-      num_dataset = sklearn.datasets.load_digits()
-    self.images = num_dataset.images
-    self.labels = num_dataset.target
+    self.images=dataset["images"]
+    self.labels=dataset["labels"]
 
   def __len__(self):
     return len(self.images)
@@ -63,23 +63,51 @@ class DataTupple(Dataset):
     lab = torch.tensor(self.labels[index])
     return img, lab
 
+
+def load_dataset(path):
+  dataset=pd.read_csv(path)
+  pixelset=dataset.iloc[:, 1:].to_numpy()
+  labels=dataset.label.tolist()
+  images=[]
+  for i in range(0, pixelset.shape[0]):
+      img=pixelset[i]
+      img= img.reshape(28,28)
+      images.append(img)
+  return images, labels
+
+
+
 ## Function to get dataloader
-def get_generator(dataset = "digit_dataset", batch_size = 1, batch_shuffle = True, num_workers = 1):
+def get_generator(dataset = "./Data/digiData/train.csv", batch_size = 1, batch_shuffle = True, num_workers = 1, train_size=512, test_size=50):
     '''
         Discription :
-            Fuction to return pytorch DataLoader for Dataset.
+            Fuction to return pytorch DataLoaders for Test, Train set.
         Returns :
-            Pytorch Dataloader,
+            Pytorch TrainSet Dataloader, TestSet Dataloader
         ARGS :
             dataset : Specify the location of dataloder by default it takes sklean digits dataset.
             batch_size : size of batch which Dataloader will return on one iteration
             batch_shuffle : Shuffling within a batch
             num_workers : Count of CPU thread working
+            train_size : size of train set
+            test_size : size of test set
     '''
     param = {
-    'batch_size': 1,
-    'shuffle': True,
-    'num_workers': 4
+    'batch_size': batch_size,
+    'shuffle': False,
+    'num_workers': num_workers
     }
-    loader = DataTupple(dataset)
-    return DataLoader(loader, **param)
+
+    images, labels = load_dataset(dataset)
+    train_size*=batch_size
+    test_size*=batch_size
+    trainSet={ 
+                "images" : images[:train_size],
+                "labels" : labels[:train_size]
+    }
+    testSet={
+                "images" : images[train_size:train_size+test_size],
+                "labels" : labels[train_size:train_size+test_size]
+    }
+
+    return DataLoader(DataTupple(trainSet), **param), DataLoader(DataTupple(testSet),  **param)
